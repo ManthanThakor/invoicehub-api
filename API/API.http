@@ -1,0 +1,136 @@
+@API_HostAddress = http://localhost:5174
+@Email = testuser_{{$timestamp}}@invoicehub.test
+@Password = TestPassword123!
+
+### ==================== REGISTRATION ====================
+### 1. Register new account
+POST {{API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "FirstName": "Test",
+  "LastName": "User",
+  "Email": "{{Email}}",
+  "Password": "{{Password}}",
+  "ConfirmPassword": "{{Password}}"
+}
+
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzE2MzY5NjAwfQ.test
+
+###
+
+### ==================== LOGIN ====================
+### 2. Login with the new account (extract token)
+POST {{API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "Email": "{{Email}}",
+  "Password": "{{Password}}"
+}
+
+###
+
+### ==================== EMAIL VERIFICATION ====================
+### 3. Verify email (you need to extract token from verification email)
+GET {{API_HostAddress}}/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2ZXJpZnkifQ.test
+Accept: application/json
+
+###
+
+### 4. Resend verification email
+POST {{API_HostAddress}}/api/auth/resend-verification
+Content-Type: application/json
+
+"{{Email}}"
+
+###
+
+### ==================== PASSWORD RESET ====================
+### 5. Forgot password (request reset token)
+POST {{API_HostAddress}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "Email": "{{Email}}"
+}
+
+###
+
+### 6. Reset password (use token from forgot-password email)
+POST {{API_HostAddress}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyZXNldCJ9.test",
+  "NewPassword": "NewPassword456!",
+  "ConfirmPassword": "NewPassword456!"
+}
+
+###
+
+### ==================== CHANGE PASSWORD ====================
+### 7. Change password (requires authentication)
+POST {{API_HostAddress}}/api/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "CurrentPassword": "{{Password}}",
+  "NewPassword": "UpdatedPassword789!",
+  "ConfirmPassword": "UpdatedPassword789!"
+}
+
+###
+
+### ==================== GOOGLE AUTH ====================
+### 8. Google authentication (requires Google ID token)
+POST {{API_HostAddress}}/api/auth/google
+Content-Type: application/json
+
+"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.test_google_token"
+
+###
+
+### ==================== AI INSIGHTS ====================
+### 9. Ask AI a financial question (requires authentication + ManagerUp role)
+### ⚠️ IMPORTANT: Update {{authToken}} with Bearer token from login response
+POST {{API_HostAddress}}/api/insights/ask
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+"What is my total revenue and who is my top customer?"
+
+###
+
+### 10. Ask AI another question
+POST {{API_HostAddress}}/api/insights/ask
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+"What are my best-selling products this month?"
+
+###
+
+### 11. Ask AI about expenses
+POST {{API_HostAddress}}/api/insights/ask
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+"How much have I spent on purchases this quarter?"
+
+###
+
+### 12. Generate insights (Admin only)
+POST {{API_HostAddress}}/api/insights/generate
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+### 13. Get all insights
+GET {{API_HostAddress}}/api/insights
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+###

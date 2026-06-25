@@ -1,0 +1,9 @@
+bin/
+obj/
+*.user
+*.suo
+.env
+logs/
+appsettings.Development.json
+.DS_Store
+Thumbs.db
