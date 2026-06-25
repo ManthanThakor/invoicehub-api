@@ -2,8 +2,16 @@ bin/
 obj/
 *.user
 *.suo
+*.lscache
+*.Backup.tmp
 .env
 logs/
 appsettings.Development.json
 .DS_Store
 Thumbs.db
+scratch/
+stdout_api.txt
+stderr_api.txt
+
+# Uploads
+API/wwwroot/uploads/
