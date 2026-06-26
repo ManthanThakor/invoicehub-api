@@ -95,7 +95,7 @@ Or set environment variables directly in your hosting platform:
 | `Email__Username` | SMTP username | No |
 | `Email__Password` | SMTP password | No |
 | `AI__ApiKey` | Groq API key | No |
-| `Cors__AllowedOrigins__0` | Frontend origin | Yes |
+| `CORS_ORIGIN` | Frontend origin (comma-separated for multiple) | Yes |
 
 ### 3. Database
 
@@ -113,19 +113,35 @@ dotnet run --project API
 
 API available at `http://localhost:5001` | Swagger at `/swagger`.
 
+**Production:** Health check at [https://manthurocks-invoicehub-api.hf.space/health](https://manthurocks-invoicehub-api.hf.space/health).
+
 ## Deployment
 
-### Render / Railway / Fly.io
+**Live API:** [https://manthurocks-invoicehub-api.hf.space](https://manthurocks-invoicehub-api.hf.space)
 
-1. Set environment variables in the dashboard
-2. Set build command: `dotnet publish API/API.csproj -c Release -o /app/publish`
-3. Set start command: `dotnet /app/publish/API.dll`
+### Hugging Face Spaces (Docker)
+
+1. Create a Space at [huggingface.co](https://huggingface.co) with **Docker** SDK
+2. Set environment variables in **Settings → Repository secrets**:
+
+   | Variable | Description | Required |
+   |---|---|---|
+   | `CONNECTIONSTRINGS__DEFAULTCONNECTION` | PostgreSQL connection string | Yes |
+   | `JWT__SECRET` | JWT signing key (min 32 chars) | Yes |
+   | `JWT__ISSUER` | `InvoiceHub` | Yes |
+   | `JWT__AUDIENCE` | `InvoiceHub` | Yes |
+   | `SUPERADMIN__EMAIL` | `superadmin@invoicehub.in` | Yes |
+   | `SUPERADMIN__PASSWORD` | SuperAdmin password | Yes |
+   | `ASPNETCORE_ENVIRONMENT` | `Production` | Yes |
+   | `CORS_ORIGIN` | Frontend URL | Yes |
+
+3. Push to the Space: `git push hf main --force`
 
 ### Docker
 
 ```bash
 docker build -t invoicehub-api .
-docker run -p 5000:80 invoicehub-api
+docker run -p 7860:7860 invoicehub-api
 ```
 
 ## API Endpoints
