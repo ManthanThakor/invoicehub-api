@@ -44,9 +44,11 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    // Railway sets PORT env var — use it or fall back to 5000
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+    // Railway sets PORT env var — only apply in non-Development
+    // In Development, launch profile (launchSettings.json) controls the URL with HTTPS
+    var port = Environment.GetEnvironmentVariable("PORT");
+    if (!string.IsNullOrEmpty(port))
+        builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
     builder.Configuration.AddEnvironmentVariables();
 
@@ -537,9 +539,9 @@ try
         .ExcludeFromDescription();
 
     Log.Information(
-        "InvoiceHub API running | Environment: {Env} | Swagger: {Swagger}",
+        "InvoiceHub API running | Environment: {Env} | URLs: {Urls}",
         app.Environment.EnvironmentName,
-        app.Environment.IsProduction() ? "disabled" : "http://localhost:5001/swagger");
+        string.Join(", ", app.Urls));
 
     await app.RunAsync();
 }
