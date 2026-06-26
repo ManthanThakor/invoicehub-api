@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Text;
 using System.Threading.RateLimiting;
 
