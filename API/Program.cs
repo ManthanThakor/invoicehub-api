@@ -38,17 +38,17 @@ try
 {
     Log.Information("Starting InvoiceHub API...");
 
-    // Load .env before the host builder reads environment variables.
-    // This ensures ASPNETCORE_ENVIRONMENT and AI__* settings are available.
-    DotNetEnv.Env.Load();
+    // Load .env if present (optional — not needed in production where env vars are used)
+    try { DotNetEnv.Env.Load(); }
+    catch (FileNotFoundException) { Log.Information("No .env file — using environment variables."); }
 
     var builder = WebApplication.CreateBuilder(args);
 
-    if (builder.Environment.IsDevelopment())
-    {
-        builder.Configuration.AddEnvironmentVariables();
-        Log.Information(".env file loaded and environment variables configured.");
-    }
+    // Railway sets PORT env var — use it or fall back to 5000
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+    builder.Configuration.AddEnvironmentVariables();
 
 
     // ══════════════════════════════════════════════════════════════════
@@ -107,6 +107,7 @@ try
         options.UseNpgsql(conn, npgsql =>
         {
             npgsql.CommandTimeout(60);
+            npgsql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
         });
 
         if (builder.Environment.IsDevelopment())
