@@ -1,3 +1,12 @@
+---
+title: InvoiceHub API
+emoji: 📄
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # InvoiceHub API
 
 GST-compliant invoicing and business management backend API built with .NET 10.
