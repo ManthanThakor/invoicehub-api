@@ -487,13 +487,20 @@ try
         };
     });
 
-    // 2. Global exception handler — always first after logging
+    // 2. Forwarded headers (required for Render/Railway proxy)
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    });
+
+    // 3. Global exception handler
     app.UseMiddleware<GlobalExceptionMiddleware>();
 
-    // 3. HTTPS redirect (skip in dev to avoid certificate warnings)
+    // 4. HTTPS redirect — skip when behind proxy (Render/Railway terminate SSL)
     if (!app.Environment.IsDevelopment())
         app.UseHsts();
-    app.UseHttpsRedirection();
+    if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
+        app.UseHttpsRedirection();
 
     // 4. Static files (serves wwwroot/uploads/*)
     app.UseStaticFiles();

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: invoicehub-api
+    env: docker
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: Jwt__Secret
+        sync: false
+      - key: Jwt__Issuer
+        value: InvoiceHub
+      - key: Jwt__Audience
+        value: InvoiceHub
+      - key: SuperAdmin__Email
+        value: superadmin@invoicehub.in
+      - key: SuperAdmin__Password
+        sync: false
