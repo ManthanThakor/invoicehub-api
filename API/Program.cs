@@ -279,10 +279,11 @@ try
     // ══════════════════════════════════════════════════════════════════
     //  8. CORS
     // ══════════════════════════════════════════════════════════════════
-    var allowedOrigins = builder.Configuration
-        .GetSection("Cors:AllowedOrigins")
-        .Get<string[]>()
-        ?? new[] { "http://localhost:3000", "http://localhost:3001" };
+    var corsOrigin = Environment.GetEnvironmentVariable("CORS_ORIGIN");
+    var allowedOrigins = corsOrigin is not null
+        ? corsOrigin.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+        : builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+          ?? new[] { "http://localhost:3000", "http://localhost:3001" };
 
     builder.Services.AddCors(opts =>
     {
